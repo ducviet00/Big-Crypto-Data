@@ -18,7 +18,7 @@ bash run.sh
 ![img](https://i.imgur.com/tw6gRmP.png)
 
 ## ElasticSearch
-- 2 replicas - 2.8gb total
+- 2 replicas - 2.5gb total
 ![img](https://i.imgur.com/wOXVFEE.png)
 
 ## Kibana
