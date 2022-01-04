@@ -11,14 +11,20 @@ bash run.sh
 
 ## Spark Cluster
 - 1 Master and 2 Workers
+
 ![img](https://i.imgur.com/mftylB4.png)
+
+## Spark Streaming
+![img](https://i.imgur.com/BW1MSTp.png)
 
 ## Kafka
 - 3 topics: `_Sentiment`, `_TradingData`, `_RedditStreamer`
+
 ![img](https://i.imgur.com/tw6gRmP.png)
 
 ## ElasticSearch
 - 2 replicas - 2.5gb total
+
 ![img](https://i.imgur.com/wOXVFEE.png)
 
 ## Kibana
