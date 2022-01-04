@@ -1,3 +1,4 @@
+from asyncio.tasks import sleep
 import os
 import sys
 from asyncio import gather, get_event_loop
@@ -75,6 +76,7 @@ class BinanceCrawler():
                         print(fetch_since, symbol)
                 candles_json = self.to_json(candles)
                 self.send_data(candles_json, symbol)
+                await sleep(0.05)
             except Exception as e:
                 print(type(e).__name__, str(e))
 

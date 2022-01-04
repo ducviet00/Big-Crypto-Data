@@ -1,9 +1,10 @@
 from elasticsearch import Elasticsearch, helpers
 from kafka import KafkaConsumer
+import time
 import json
 
 es = Elasticsearch(
-    ['es01:9200', 'es02:9200', 'es03:9200'],
+    ['es01:9200', 'es02:9200'],
     # sniff before doing anything
     sniff_on_start=True,
     # refresh nodes after a node fails to respond
@@ -21,3 +22,4 @@ for message in consumer:
     candles = json.loads(message)
     index_ = "candlestick"
     helpers.bulk(es, candles, index=index_, doc_type='_doc', request_timeout=200)
+    time.sleep(0.05)
