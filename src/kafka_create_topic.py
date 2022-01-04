@@ -1,12 +1,10 @@
 from kafka.admin import KafkaAdminClient, NewTopic
 
 
-admin_client = KafkaAdminClient(
-    bootstrap_servers="kafka:9092"
-)
+admin_client = KafkaAdminClient(bootstrap_servers="kafka:9092")
 
 
-topic_names = ['_TradingData', '_RedditStreamer']
+topic_names = ["_TradingData", "_RedditStreamer", "_Sentiment"]
 
 topic_list = []
 

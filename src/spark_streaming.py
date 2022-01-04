@@ -2,6 +2,8 @@ from pyspark.sql import SparkSession
 import pyspark.sql.functions as SF
 from pyspark.sql.types import StructType, StructField, StringType, FloatType
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import nltk
+nltk.download('vader_lexicon')
 
 SPARK_MASTER = "spark://spark:7077"
 
@@ -49,10 +51,11 @@ df = df.withColumn("body", df.value["body"])
 sentiment_analysis_udf = SF.udf(sentiment_analysis, FloatType())
 df = df.withColumn("polarity", sentiment_analysis(df.body))
 
-df.drop()
+df = df.drop("key", "value", "topic", "partition", "timestampType")
 # rdd = df.rdd.map(lambda row: (row.timestamp, row.author, row.body, sentiment_analysis(row)))
 
 # df = rdd.toDF(["timestamp","author","body", "polarity"])
 
+conf = {"es.resource" : "index/type"}
 
 df.writeStream.format("console").outputMode("append").start().awaitTermination()

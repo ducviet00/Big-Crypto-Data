@@ -61,7 +61,6 @@ class BinanceCrawler():
         timeframe_duration_in_seconds = self.exchange.parse_timeframe(self.timeframe)
         timeframe_duration_in_ms = timeframe_duration_in_seconds * 1000
         timedelta = self.limit * timeframe_duration_in_ms
-        all_ohlcv = []
         fetch_since = since
         while fetch_since < self.exchange.milliseconds():
             try:
@@ -70,10 +69,8 @@ class BinanceCrawler():
                 fetch_since = (
                     (candles[-1][0] + 1) if len(candles) else (fetch_since + timedelta)
                 )
-                if len(candles):
-                    all_ohlcv = all_ohlcv + candles
-                    if len(all_ohlcv):
-                        print(fetch_since, symbol)
+                if fetch_since:
+                    print(fetch_since, symbol)
                 candles_json = self.to_json(candles)
                 self.send_data(candles_json, symbol)
                 await sleep(0.05)

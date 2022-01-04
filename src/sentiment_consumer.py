@@ -15,11 +15,11 @@ es = Elasticsearch(
 
 
 consumer = KafkaConsumer(bootstrap_servers=['kafka:9092'], auto_offset_reset='earliest', consumer_timeout_ms=1000)
-consumer.subscribe(['_TradingData'])
+consumer.subscribe(['_Sentiment'])
 
 for message in consumer:
     message = message.value.decode('utf-8')
-    candles = json.loads(message)
-    index_ = "candlesticks"
-    response = helpers.bulk(es, candles, index=index_, request_timeout=200)
+    comments = json.loads(message)
+    index_ = "sentiment"
+    response = helpers.bulk(es, comments, index=index_, request_timeout=200)
     time.sleep(0.05)

@@ -27,7 +27,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   
   spark:
-    image: docker.io/bitnami/spark:3
+    image: custom_spark:0.1
     environment:
       - SPARK_MODE=master
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
@@ -41,7 +41,7 @@ services:
       - bigdata
 
   spark-worker-01:
-    image: docker.io/bitnami/spark:3
+    image: custom_spark:0.1
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
@@ -55,7 +55,7 @@ services:
       - bigdata
 
   spark-worker-02:
-    image: docker.io/bitnami/spark:3
+    image: custom_spark:0.1
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
@@ -119,7 +119,7 @@ services:
       - bigdata
     
   runner:
-    image: runner:0.1
+    image: custom_spark:0.1
     container_name: runner
     depends_on:
       - kafka
