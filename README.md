@@ -28,4 +28,4 @@ bash run.sh
 ![img](https://i.imgur.com/wOXVFEE.png)
 
 ## Kibana
-![img](https://i.imgur.com/tvWjWm6.png)
+![img](https://i.imgur.com/yQ4BP5B.png)
