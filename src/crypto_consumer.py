@@ -22,4 +22,4 @@ for message in consumer:
     candles = json.loads(message)
     index_ = "candlesticks"
     response = helpers.bulk(es, candles, index=index_, request_timeout=200)
-    time.sleep(0.05)
+    time.sleep(0.01)

@@ -1,0 +1,64 @@
+from pyspark.sql import SparkSession
+import pyspark.sql.functions as SF
+from pyspark.sql.types import StructType, StructField, StringType, FloatType
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import nltk
+
+nltk.download("vader_lexicon")
+
+SPARK_MASTER = "spark://spark:7077"
+
+sia = SentimentIntensityAnalyzer()
+
+
+@SF.udf
+def sentiment_analysis(message):
+    print("==="*10)
+    print(message)
+    print(type(message))
+    # message["polarity"] = sia.polarity_scores(message["body"])["compound"]
+    return message
+
+
+spark = SparkSession.builder.appName("RedditStream").master(SPARK_MASTER).getOrCreate()
+spark.sparkContext.setLogLevel("WARN")
+
+
+df = (
+    spark.readStream.format("kafka")
+    .option("kafka.bootstrap.servers", "kafka:9092")
+    .option("subscribe", "_RedditStreamer")
+    .load()
+)
+
+
+data_schema = StructType(
+    [
+        StructField("date", StringType(), False),
+        StructField("author", StringType(), False),
+        StructField("body", StringType(), False),
+    ]
+)
+
+
+expr_cols = [f"CAST({col} AS STRING)" for col in df.columns]
+
+df = df.selectExpr(*expr_cols)
+
+df = df.withColumn("value", SF.from_json(SF.col("value"), data_schema))
+sentiment_analysis_udf = SF.udf(sentiment_analysis, FloatType())
+df = df.withColumn("value", sentiment_analysis(df.value))
+
+
+# rdd = df.rdd.map(lambda row: (row.timestamp, row.author, row.body, sentiment_analysis(row)))
+
+# df = rdd.toDF(["timestamp","author","body", "polarity"])
+
+# df.writeStream.format("console").outputMode("append").start().awaitTermination()
+df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)").writeStream.format(
+    "kafka"
+).option("checkpointLocation", "./checkpoint/").option(
+    "kafka.bootstrap.servers", "kafka:9092"
+).option(
+    "topic", "_Sentiment"
+).start().awaitTermination()
