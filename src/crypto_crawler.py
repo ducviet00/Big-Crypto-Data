@@ -24,12 +24,12 @@ import ccxt.async_support as ccxt  # noqa: E402
 print("CCXT Version:", ccxt.__version__)
 
 class BinanceCrawler():
-    def __init__(self, listener, symbols, timeframe="1m", limit=1000):
+    def __init__(self, producer, symbols, timeframe="1m", limit=1000):
         self.exchange = ccxt.binance()
         self.timeframe = timeframe
         self.limit = limit
         self.symbols = symbols
-        self.listener = listener
+        self.producer = producer
 
 
     def send_data(self, candles, trading_pair):
@@ -37,9 +37,7 @@ class BinanceCrawler():
         ticker = trading_pair.split("/")[0].upper()
         for candle in candles:
             candle["ticker"] = ticker
-            print(candle)
-            if self.listener.bootstrap_connected():
-                self.listener.send(topic="TradingData", value=candle)
+        self.producer.send(topic="_TradingData", value=candles)
 
     def to_json(self, candles):
         data = []
@@ -59,13 +57,12 @@ class BinanceCrawler():
 
     async def fetch_ohlcv(self, symbol):
         since = self.exchange.parse8601("2017-08-17T00:00:00Z")
-        now = self.exchange.milliseconds()
         timeframe_duration_in_seconds = self.exchange.parse_timeframe(self.timeframe)
         timeframe_duration_in_ms = timeframe_duration_in_seconds * 1000
         timedelta = self.limit * timeframe_duration_in_ms
         all_ohlcv = []
         fetch_since = since
-        while fetch_since < now:
+        while fetch_since < self.exchange.milliseconds():
             try:
                 candles = await self.exchange.fetch_ohlcv(symbol, self.timeframe, fetch_since, self.limit)
 
@@ -75,7 +72,7 @@ class BinanceCrawler():
                 if len(candles):
                     all_ohlcv = all_ohlcv + candles
                     if len(all_ohlcv):
-                        print(len(all_ohlcv), symbol, "candles")
+                        print(fetch_since, symbol)
                 candles_json = self.to_json(candles)
                 self.send_data(candles_json, symbol)
             except Exception as e:

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import praw
 from kafka_producer import producer
 
@@ -24,7 +23,7 @@ class RedditStreamer():
                 author=comment.author.name,
                 body=comment.body
             )
-            self.listener.send(topic="RedditStreamer", value=message)
+            self.listener.send(topic="_RedditStreamer", value=message)
 
 
 if __name__ == "__main__":

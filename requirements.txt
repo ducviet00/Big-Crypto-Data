@@ -1,3 +1,9 @@
 ccxt
+praw
+wheel
+elasticsearch
 nltk
 textblob
+kafka-python
+pyspark
+python-dotenv
