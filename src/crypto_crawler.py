@@ -62,7 +62,7 @@ class BinanceCrawler():
         timeframe_duration_in_ms = timeframe_duration_in_seconds * 1000
         timedelta = self.limit * timeframe_duration_in_ms
         fetch_since = since
-        while fetch_since < self.exchange.milliseconds():
+        while True:
             try:
                 candles = await self.exchange.fetch_ohlcv(symbol, self.timeframe, fetch_since, self.limit)
 
